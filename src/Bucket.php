@@ -2,10 +2,9 @@
 
 namespace AprSoft\Aliyun\OSS;
 
-/**
- * This is just an example.
- */
-class AutoloadExample extends \yii\base\Widget
+use yii;
+
+class Bucket
 {
     public function run()
     {
