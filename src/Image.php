@@ -2,6 +2,7 @@
 namespace AprSoft\Aliyun\OSS;
 
 use OSS\Core\OssException;
+use OSS\OssClient;
 use Yii;
 use yii\base\Component;
 
