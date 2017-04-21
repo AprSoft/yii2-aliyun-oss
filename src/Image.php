@@ -1,6 +1,8 @@
 <?php
 namespace AprSoft\Aliyun\OSS;
 
+use OSS\Core\OssException;
+use Yii;
 use yii\base\Component;
 use yii\base\InvalidConfigException;
 
@@ -57,25 +59,74 @@ class Image extends Component
     {
         $this->_ossClient = $ossClient;
     }
-
+    /**
+     * @todo    上传文件
+     * @param   [string]    $name     [存储的文件标识]
+     * @param   [string]    $filePath [本地文件路径]
+     * @param   [array]     $options  [上传选项]
+     * @return  [boolean]
+     */
     public function upload($name, $filePath, $options = null)
     {
-        return $this->client->uploadFile($this->bucket, $name, $filePath, $options);
+        try {
+            $this->client->uploadFile($this->bucket, $name, $filePath, $options);
+        } catch (OssException $e) {
+            Yii::error($e->getMessage(), __METHOD__);
+            return false;
+        }
+        return true;
     }
 
+    /**
+     * @todo    分片上传文件
+     * @param   [string]    $name     [存储的文件标识]
+     * @param   [string]    $filePath [本地文件路径]
+     * @param   [array]     $options  [上传选项]
+     * @return  [boolean]
+     */
     public function multipartUpload($name, $file, $options = null)
     {
-        return $this->client->multiuploadFile($this->bucket, $name, $filePath, $options);
+        try {
+            $this->client->multiuploadFile($this->bucket, $name, $filePath, $options);
+        } catch (OssException $e) {
+            Yii::error($e->getMessage(), __METHOD__);
+            return false;
+        }
+        return true;
     }
 
+    /**
+     * @todo    文件是否存在
+     * @param   [string]    $name     [存储的文件标识]
+     * @param   [array]     $options  [上传选项]
+     * @return  [boolean]
+     */
     public function exist($name, $options = null)
     {
-        return $this->client->doesObjectExist($this->bucket, $name);
+        try {
+            $this->client->doesObjectExist($this->bucket, $name);
+        } catch (OssException $e) {
+            Yii::error($e->getMessage(), __METHOD__);
+            return false;
+        }
+        return true;
     }
 
-    public function download()
+    /**
+     * @todo    获取指定资源的名称
+     * @param   [string]    $name     [存储的文件标识]
+     * @param   [array]     $options  [上传选项]
+     * @return  [boolean]
+     */
+    public function get($name, $options = null)
     {
-
+        try {
+            $this->client->getObject($this->bucket, $name, $options);
+        } catch (OssException $e) {
+            Yii::error($e->getMessage(), __METHOD__);
+            return false;
+        }
+        return true;
     }
 
 }
