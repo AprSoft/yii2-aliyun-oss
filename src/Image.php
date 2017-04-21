@@ -5,6 +5,7 @@ use OSS\Core\OssException;
 use OSS\OssClient;
 use Yii;
 use yii\base\Component;
+use yii\log\Logger;
 
 /**
  * @todo Aliyun 图片上传
@@ -46,12 +47,12 @@ class Image extends Component
      * @param   [array]     $options  [上传选项]
      * @return  [boolean]
      */
-    public function upload($name, $filePath, $options = null)
+    public function upload(string $name, string $filePath, array $options = null)
     {
         try {
             $this->client->uploadFile($this->bucket, $name, $filePath, $options);
         } catch (OssException $e) {
-            Yii::error($e->getMessage(), __METHOD__);
+            Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR, 'oss');
             return false;
         }
         return true;
@@ -64,12 +65,12 @@ class Image extends Component
      * @param   [array]     $options  [上传选项]
      * @return  [boolean]
      */
-    public function multipartUpload($name, $file, $options = null)
+    public function multipartUpload(string $name, string $filePath, array $options = null)
     {
         try {
             $this->client->multiuploadFile($this->bucket, $name, $filePath, $options);
         } catch (OssException $e) {
-            Yii::error($e->getMessage(), __METHOD__);
+            Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR, 'oss');
             return false;
         }
         return true;
@@ -81,12 +82,12 @@ class Image extends Component
      * @param   [array]     $options  [上传选项]
      * @return  [boolean]
      */
-    public function exist($name, $options = null)
+    public function exist(string $name, array $options = null)
     {
         try {
             $this->client->doesObjectExist($this->bucket, $name);
         } catch (OssException $e) {
-            Yii::error($e->getMessage(), __METHOD__);
+            Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR, 'oss');
             return false;
         }
         return true;
@@ -98,12 +99,73 @@ class Image extends Component
      * @param   [array]     $options  [上传选项]
      * @return  [boolean]
      */
-    public function get($name, $options = null)
+    public function download(string $name, array $options = null)
     {
+        try {
+            $content = $this->client->getObject($this->bucket, $name, $options);
+        } catch (OssException $e) {
+            Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR, 'oss');
+            return false;
+        }
+        return $content;
+    }
+
+    /**
+     * @todo    获取指定资源的名称
+     * @param   [string]    $name     [存储的文件标识]
+     * @param   [array]     $options  [上传选项]
+     * @return  [boolean]
+     */
+    public function downloadToLocation(string $name, string $location, array $options = null)
+    {
+        $options[OssClient::OSS_FILE_DOWNLOAD] = $location;
         try {
             $this->client->getObject($this->bucket, $name, $options);
         } catch (OssException $e) {
-            Yii::error($e->getMessage(), __METHOD__);
+            Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR, 'oss');
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @todo    复制文件
+     * @param   [type] $fromName   [资源名称]
+     * @param   [type] $toName     [新资源名称]
+     * @param   [type] $options    [选项]
+     * @param   [type] $toBucket   [目标Bucket]
+     * @param   [type] $fromBucket [来源Bucket]
+     * @return  [Boolean]
+     */
+    public function copy(string $fromName, string $toName, array $options = null, string $toBucket = null, string $fromBucket = null)
+    {
+        if ($fromBucket == null) {
+            $fromBucket = $this->bucket;
+        }
+        if ($toBucket == null) {
+            $toBucket = $this->bucket;
+        }
+        try {
+            $this->client->copyObject($fromBucket, $fromName, $toBucket, $toName, $options);
+        } catch (OssException $e) {
+            Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR, 'oss');
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @todo    删除资源
+     * @param   [string]    $name       [资源名称]
+     * @param   [array]     $options    [选项]
+     * @return  [boolean]
+     */
+    public function delete(string $name, array $options = null)
+    {
+        try {
+            $this->client->deleteObject($this->bucket, $name, $options);
+        } catch (OssException $e) {
+            Yii::getLogger()->log($e->getMessage(), Logger::LEVEL_ERROR, 'oss');
             return false;
         }
         return true;
