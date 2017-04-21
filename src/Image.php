@@ -4,7 +4,6 @@ namespace AprSoft\Aliyun\OSS;
 use OSS\Core\OssException;
 use Yii;
 use yii\base\Component;
-use yii\base\InvalidConfigException;
 
 /**
  * @todo Aliyun 图片上传
@@ -26,26 +25,6 @@ class Image extends Component
     public $securityToken = null;
 
     private $_ossClient;
-
-    public function __construct()
-    {
-        parent::init();
-        if (!isset($this->accessKeyId)) {
-            throw new InvalidConfigException('请先配置Access Key');
-        }
-
-        if (!isset($this->accessKeySecret)) {
-            throw new InvalidConfigException('请先配置accessKeySecret');
-        }
-
-        if (!isset($this->endpoint)) {
-            throw new InvalidConfigException('请先配置endpoint');
-        }
-
-        if (!isset($this->bucket)) {
-            throw new InvalidConfigException('请先配置bucket');
-        }
-    }
 
     public function getClient()
     {
