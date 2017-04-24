@@ -10,7 +10,7 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```
-php composer.phar require --prefer-dist aprsoft/yii2-aliyun-oss "*"
+composer require --prefer-dist aprsoft/yii2-aliyun-oss "*"
 ```
 
 or add
@@ -25,7 +25,25 @@ to the require section of your `composer.json` file.
 Usage
 -----
 
-Once the extension is installed, simply use it in your code by  :
-
+web.php
 ```php
-<?= \AprSoft\Aliyun\OSS\AutoloadExample::widget(); ?>```
+'aliyunOssImage' => [
+    "class" => 'AprSoft\Aliyun\OSS\Image',
+    "accessKeyId" => 'xxxxxxxxxxxxxx',
+    "accessKeySecret" => 'xxxxxxxx',
+    "bucket" => 'xxxxx',
+    "endpoint" => 'http://oss-cn-zhangjiakou.aliyuncs.com',
+],
+'aliyunOssBucket' => [
+    "class" => 'AprSoft\Aliyun\OSS\Bucket',
+    "accessKeyId" => 'xxxxxxx',
+    "accessKeySecret" => 'xxxxxx',
+    "endpoint" => 'http://oss-cn-zhangjiakou.aliyuncs.com',
+],
+```
+
+代码中使用
+```php
+$bucket = Yii::$app->aliyunOssImage;
+$back = $bucket->list();
+```
